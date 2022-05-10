@@ -1,0 +1,18 @@
+#!/usr/bin/env python3
+
+from flask_restful import Api
+from flask import Flask, render_template
+
+from ping import Ping
+
+app = Flask(__name__)
+api = Api(app)
+
+
+@app.route("/")
+@app.route("/<string:name>")
+def lmao(name=""):
+    return render_template("index.html", name=name)
+
+
+api.add_resource(Ping, "/ping", "/ping/<string:name>")
