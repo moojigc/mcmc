@@ -15,3 +15,6 @@ gunicorn = "*"
 
 [requires]
 python_version = "3.9"
+
+[scripts]
+setup = "python setup_commands.py"
