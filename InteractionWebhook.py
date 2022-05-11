@@ -83,11 +83,11 @@ class InteractionWebhook(MyResource):
                     }
                 }
             except Exception as e:
-                print(e)
+                logging.debug(e)
                 return {
                     "type": 4,
                     "data": {
                         "tts": False,
-                        "content": "Mad failure. No idea what happened!"
+                        "content": repr(e)
                     }
                 }
