@@ -6,6 +6,8 @@ COPY . .
 RUN pip install pipenv
 RUN pipenv install
 
+ENV PORT=80
+
 EXPOSE 80
 
-CMD ["pipenv", "run", "start"]
+CMD ["pipenv", "run", "prod"]

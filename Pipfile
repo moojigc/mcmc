@@ -18,3 +18,4 @@ python_version = "3.9"
 
 [scripts]
 setup = "python setup_commands.py"
+prod = "gunicorn -w 1 server:app"

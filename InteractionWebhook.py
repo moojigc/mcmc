@@ -66,22 +66,28 @@ class InteractionWebhook(MyResource):
         except BadSignatureError:
             return 'invalid request signature', 401
 
-        try:
-            return self.__handle(req=request.json)
-        except DockerExecError as e:
+        req = request.json
+        if req['type'] == 1:
             return {
-                "type": 4,
-                "data": {
-                    "tts": False,
-                    "content": e.message
-                }
+                "type": 1
             }
-        except Exception as e:
-            print(e)
-            return {
-                "type": 4,
-                "data": {
-                    "tts": False,
-                    "content": "Mad failure. No idea what happened!"
+        else:
+            try:
+                return self.__handle(req=request.json)
+            except DockerExecError as e:
+                return {
+                    "type": 4,
+                    "data": {
+                        "tts": False,
+                        "content": e.message
+                    }
                 }
-            }
+            except Exception as e:
+                print(e)
+                return {
+                    "type": 4,
+                    "data": {
+                        "tts": False,
+                        "content": "Mad failure. No idea what happened!"
+                    }
+                }
