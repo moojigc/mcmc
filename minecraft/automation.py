@@ -3,7 +3,7 @@
 import re
 import requests
 from typing import List, Literal
-from docker import from_env
+from docker import from_env, errors as docker_errors
 from docker.models.containers import Container
 import logging
 import argparse
@@ -13,12 +13,13 @@ class DiscordMessenger:
     URL = "https://discord.com/api/webhooks/973268794208301077/RtP45AFmYEWRYabIkAY-3tozTsG1Qcjw13NNOa8tBeAJ7nZnQfWfHX5B7l6LqdJiE1V0"
 
     def send_message(self, message: str):
-        res = requests.post(DiscordMessenger.URL, json={
-            "content": message,
-        })
-        logging.info(
-            f"DiscordMessenger.send_message: {res.status_code} {res.content}")
-        return res
+        pass
+        # res = requests.post(DiscordMessenger.URL, json={
+        #     "content": message,
+        # })
+        # logging.info(
+        #     f"DiscordMessenger.send_message: {res.status_code} {res.content}")
+        # return res
 
 
 class DockerExecError(Exception):
@@ -55,11 +56,14 @@ class Rcon:
         self.discord_messenger = discord_messenger
 
     def __cmd(self, cmd_str: str) -> str:
-        result = self.docker_wrapper.minecraft_server.exec_run(
-            f"rcon-cli {cmd_str}")
-        if result.exit_code > 0:
-            raise DockerExecError(message=result.output)
-        return str(result.output)
+        try:
+            result = self.docker_wrapper.minecraft_server.exec_run(
+                f"rcon-cli {cmd_str}")
+            if result.exit_code > 0:
+                raise DockerExecError(message=result.output)
+            return str(result.output)
+        except docker_errors.APIError:
+            raise DockerExecError(message="MC MC server is asleep.")
 
     def say(self, message: str):
         logging.info(f"Sending message: {message}")
@@ -77,7 +81,8 @@ class Rcon:
         [_, names_str] = self.list().split(": ")
         names_list = [re.sub(pattern=r"\\n'", string=n, repl="").strip()
                       for n in names_str.split(",")]
-        return names_list
+        logging.debug(names_list)
+        return list(filter(lambda x: bool(x), names_list))
 
     def get_player_count(self) -> int:
         return len(self.get_player_names())
@@ -116,9 +121,11 @@ def main(command: Literal["on", "off", "ping", "count", "send_message"], **kwarg
             return "MC MC server is already off."
     elif command == "ping":
         rcon.say("Ping test")
-        return "MC MC server is ok."
+        return "Pong! MC MC server is up and running."
     elif command == "count":
-        return f"{rcon.get_player_count()} players currently online."
+        count = rcon.get_player_count()
+        print(count)
+        return f"{count} {'player' if count == 1 else 'players'} currently online."
     elif command == "send_message":
         msg = f"{kwargs['source']} message from {kwargs['name']}: {kwargs['message']}"
         rcon.say(

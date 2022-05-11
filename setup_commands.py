@@ -50,6 +50,11 @@ def main():
                     "description": "Everyone online will see this!"
                 }
             ]
+        },
+        {
+            "type": 1,
+            "name": "players",
+            "description": "See how many people are online.",
         }
     ]
 

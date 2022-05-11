@@ -1,5 +1,5 @@
-from User import User
-from dataclasses import dataclass
+from interactions.User import User
+from dataclasses import dataclass, field
 from typing import List
 
 
@@ -13,4 +13,4 @@ class Member:
     permissions: str
     premium_since: str
     roles: List[str]
-    user: User
+    user: User = field(default_factory=User)

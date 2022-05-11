@@ -1,6 +1,6 @@
-from dataclasses import dataclass
-from Message import Message
-from Member import Member
+from dataclasses import dataclass, field, make_dataclass
+from interactions.Message import Message
+from interactions.Member import Member
 
 
 @dataclass
@@ -8,9 +8,11 @@ class Interaction:
     id: str
     application_id: str
     channel_id: str
-    data: Message
     guild_id: str
-    member: Member
+    guild_locale: str
+    locale: str
     token: str
     type: int
     version: int
+    member: Member = field(default_factory=Member)
+    data: Message = field(default_factory=Message)

@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, List
 
@@ -9,9 +9,9 @@ class ValueType(Enum):
 
 
 @dataclass
-class Options:
+class Option:
     name: str
-    type: ValueType.value
+    type: int
     value: Any
 
 
@@ -20,4 +20,4 @@ class Message:
     id: str
     name: str
     value: Any
-    options: List[Options]
+    options: field(default_factory=lambda xs: [Option(x) for x in xs])

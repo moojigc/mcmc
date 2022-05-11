@@ -6,6 +6,7 @@ from flask_restful import request, abort
 from nacl.signing import VerifyKey
 from nacl.exceptions import BadSignatureError
 from minecraft.automation import DockerExecError, main as send_mc_command
+from interactions.Interaction import Interaction
 
 
 class InteractionWebhook(MyResource):
@@ -15,7 +16,9 @@ class InteractionWebhook(MyResource):
         )
 
     def __handle(self, req):
-        cmd_name = req['data']['name']
+        interaction = Interaction(**req)
+        print(interaction)
+        cmd_name = interaction.data['name']
         if cmd_name == 'ping':
             msg: str
             msg = send_mc_command("ping")
@@ -27,21 +30,29 @@ class InteractionWebhook(MyResource):
                 }
             }
         elif cmd_name == "server":
-            options: List[Any] = req['data']['options']
-            value = options[0]['value']
-
-            msg = send_mc_command(value)
+            option = interaction.data['options'][0]
+            msg = send_mc_command(option['value'])
             return {
                 "type": 4,
                 "data": {
                     "tts": False,
-                    "content": value
+                    "content": msg
+                }
+            }
+        elif cmd_name == "players":
+            msg = send_mc_command("count")
+            return {
+                "type": 4,
+                "data": {
+                    "tts": False,
+                    "content": msg
                 }
             }
         else:
-            options: List[Any] = req['data']['options']
-            msg = options[0]['value']
-            res_msg = send_mc_command(msg)
+            option = interaction.data['options'][0]
+            name = interaction.member['user']['username']
+            res_msg = send_mc_command(
+                "send_message", message=option['value'], source="DISCORD", name=name)
             return {
                 "type": 4,
                 "data": {
@@ -83,6 +94,7 @@ class InteractionWebhook(MyResource):
                     }
                 }
             except Exception as e:
+                raise e
                 logging.debug(e)
                 return {
                     "type": 4,
