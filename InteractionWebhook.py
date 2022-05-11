@@ -41,7 +41,7 @@ class InteractionWebhook(MyResource):
         else:
             options: List[Any] = req['data']['options']
             msg = options[0]['value']
-            res_msg = send_mc_command(value)
+            res_msg = send_mc_command(msg)
             return {
                 "type": 4,
                 "data": {
