@@ -4,16 +4,14 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-Flask = "*"
-Flask-RESTful = "*"
-PyNaCl = "*"
-requests = "*"
+requests = "==2.25.1"
+Flask = "==2.1.2"
+Flask-RESTful = "==0.3.9"
+PyNaCl = "==1.5.0"
+docker = "==5.0.3"
+gunicorn = "*"
 
 [dev-packages]
 
 [requires]
 python_version = "3.9"
-
-[scripts]
-dev = "python src/dev_server.py"
-setup = "python setup_commands.py"
