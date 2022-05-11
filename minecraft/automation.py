@@ -36,7 +36,7 @@ class DockerWrapper:
             self.minecraft_server: Container = list(filter(
                 lambda c: c.name == DockerWrapper.MC_CONTAINER_NAME, self.client.containers.list(all=True)))[0]
         except Exception:
-            raise DockerExecError(message="MC MC Server is not running!.")
+            raise DockerExecError(message="MC MC Server is not running!")
 
     def startup(self):
         self.minecraft_server.start()

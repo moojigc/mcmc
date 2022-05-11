@@ -14,6 +14,42 @@ class InteractionWebhook(MyResource):
             []
         )
 
+    def __handle(self, req):
+        cmd_name = req['data']['name']
+        if cmd_name == 'ping':
+            msg: str
+            msg = send_mc_command("ping")
+            return {
+                "type": 4,
+                "data": {
+                    "tts": False,
+                    "content": msg
+                }
+            }
+        elif cmd_name == "server":
+            options: List[Any] = req['data']['options']
+            value = options[0]['value']
+
+            msg = send_mc_command(value)
+            return {
+                "type": 4,
+                "data": {
+                    "tts": False,
+                    "content": value
+                }
+            }
+        else:
+            options: List[Any] = req['data']['options']
+            msg = options[0]['value']
+            res_msg = send_mc_command(value)
+            return {
+                "type": 4,
+                "data": {
+                    "tts": False,
+                    "content": res_msg
+                }
+            }
+
     def post(self):
         # Your public key can be found on your application in the Developer Portal
         PUBLIC_KEY = 'e19867538e064e1e9a87e295f36aad6db3d9e4e649137428029dee2d9a25a86d'
@@ -30,39 +66,22 @@ class InteractionWebhook(MyResource):
         except BadSignatureError:
             return 'invalid request signature', 401
 
-        req = request.json
-        cmd_name = req['data']['name']
-        if cmd_name == 'ping':
-            msg: str
-            try:
-                msg = send_mc_command("ping")
-            except DockerExecError as e:
-                print(e.message)
-                msg = e.message or "Something went wrong! IDK WHAT FAM!"
+        try:
+            return self.__handle(req=request.json)
+        except DockerExecError as e:
             return {
                 "type": 4,
                 "data": {
                     "tts": False,
-                    "content": msg
+                    "content": e.message
                 }
             }
-        elif cmd_name == "server":
-            options: List[Any] = req['data']['options']
-            option = options[0]['value']
+        except Exception as e:
+            print(e)
             return {
                 "type": 4,
                 "data": {
                     "tts": False,
-                    "content": option
-                }
-            }
-        else:
-            options: List[Any] = req['data']['options']
-            msg = options[0]['value']
-            return {
-                "type": 4,
-                "data": {
-                    "tts": False,
-                    "content": msg
+                    "content": "Mad failure. No idea what happened!"
                 }
             }

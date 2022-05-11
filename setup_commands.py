@@ -29,11 +29,11 @@ def main():
                     "choices": [
                            {
                                "name": "Turn on",
-                               "value": "SERVER_ON"
+                               "value": "on"
                            },
                         {
                                "name": "Turn off",
-                               "value": "SERVER_OFF"
+                               "value": "off"
                            }
                     ]
                 },
