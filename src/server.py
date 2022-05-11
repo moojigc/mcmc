@@ -4,6 +4,7 @@ from flask_restful import Api
 from flask import Flask, render_template
 
 from ping import Ping
+from InteractionWebhook import InteractionWebhook
 
 app = Flask(__name__)
 api = Api(app)
@@ -16,3 +17,4 @@ def lmao(name=""):
 
 
 api.add_resource(Ping, "/ping", "/ping/<string:name>")
+api.add_resource(InteractionWebhook, "/interactions", methods=["POST"])

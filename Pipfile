@@ -7,6 +7,7 @@ name = "pypi"
 Flask = "*"
 Flask-RESTful = "*"
 PyNaCl = "*"
+requests = "*"
 
 [dev-packages]
 
@@ -15,3 +16,4 @@ python_version = "3.9"
 
 [scripts]
 dev = "python src/dev_server.py"
+setup = "python setup_commands.py"
