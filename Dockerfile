@@ -3,6 +3,7 @@ FROM python:3.9
 WORKDIR /app
 COPY . .
 RUN mkdir data
+COPY /app/minecraft/automation.py /app/data/minecraft_automation.py
 
 RUN pip install pipenv
 RUN pipenv install

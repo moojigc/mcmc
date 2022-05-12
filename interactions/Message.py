@@ -12,12 +12,19 @@ class ValueType(Enum):
 class Option:
     name: str
     type: int
-    value: Any
+    value: str
 
 
 @dataclass
 class Message:
     id: str
     name: str
-    value: Any
-    options: field(default_factory=lambda xs: [Option(x) for x in xs])
+    type: int
+    options: List[Option] = field(
+        default_factory=list)
+    value: str = None
+
+    def __post_init__(self):
+        self.options = [
+            Option(**option) for option in self.options
+        ]

@@ -11,9 +11,9 @@ class Argument:
 
 
 class MyResource(Resource):
-    def __init__(self, args: List[Argument]) -> None:
+    def __init__(self, args: List[Argument] = None) -> None:
         super().__init__()
-        self._args = args
+        self._args = args or []
         self.request_args = reqparse.RequestParser()
         for arg in self._args:
             help = f"{arg.name} is required" if arg.is_required else None

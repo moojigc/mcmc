@@ -1,5 +1,5 @@
 from datetime import datetime
-from my_resource import Argument, MyResource
+from utils.my_resource import Argument, MyResource
 
 
 class Ping(MyResource):

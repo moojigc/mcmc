@@ -1,15 +1,12 @@
 import os
 import requests
 
+from env import DISCORD_BOT_TOKEN, DISCORD_SERVER_ID, MOOJCRAFT_APP_ID
+
 
 def main():
-    APP_ID = os.environ.get("MOOJCRAFT_APPLICATION_ID")
-    BOT_TOKEN = os.environ.get("BOT_TOKEN")
-    DISCORD_SERVER_ID = 973268273493868574
-    URLS = [f"https://discord.com/api/v8/applications/{APP_ID}/commands",
-            f"https://discord.com/api/v8/applications/{APP_ID}/guilds/{DISCORD_SERVER_ID}/commands"]
-
-    # This is an example CHAT_INPUT or Slash Command, with a type of 1
+    URLS = [f"https://discord.com/api/v8/applications/{MOOJCRAFT_APP_ID}/commands",
+            f"https://discord.com/api/v8/applications/{MOOJCRAFT_APP_ID}/guilds/{DISCORD_SERVER_ID}/commands"]
     commands = [
         {
             "type": 1,
@@ -59,7 +56,7 @@ def main():
     ]
 
     headers = {
-        "Authorization": f"Bot {BOT_TOKEN}"
+        "Authorization": f"Bot {DISCORD_BOT_TOKEN}"
     }
     for command in commands:
         for URL in URLS:

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import asyncio
 import re
 import requests
 from typing import List, Literal
@@ -8,18 +9,17 @@ from docker.models.containers import Container
 import logging
 import argparse
 
+from env import DISCORD_WEBHOOK_URL
 
-class DiscordMessenger:
-    URL = "https://discord.com/api/webhooks/973268794208301077/RtP45AFmYEWRYabIkAY-3tozTsG1Qcjw13NNOa8tBeAJ7nZnQfWfHX5B7l6LqdJiE1V0"
 
-    def send_message(self, message: str):
-        pass
-        # res = requests.post(DiscordMessenger.URL, json={
-        #     "content": message,
-        # })
-        # logging.info(
-        #     f"DiscordMessenger.send_message: {res.status_code} {res.content}")
-        # return res
+def send_webhook_message(message: str):
+    if __name__ == "__main__":
+        res = requests.post(DISCORD_WEBHOOK_URL, json={
+            "content": message,
+        })
+        logging.info(
+            f"DiscordMessenger.send_message: {res.status_code} {res.content}")
+        return res
 
 
 class DockerExecError(Exception):
@@ -51,16 +51,15 @@ class DockerWrapper:
 
 
 class Rcon:
-    def __init__(self, docker_wrapper: DockerWrapper, discord_messenger: DiscordMessenger) -> None:
+    def __init__(self, docker_wrapper: DockerWrapper) -> None:
         self.docker_wrapper = docker_wrapper
-        self.discord_messenger = discord_messenger
 
     def __cmd(self, cmd_str: str) -> str:
         try:
             result = self.docker_wrapper.minecraft_server.exec_run(
                 f"rcon-cli {cmd_str}")
             if result.exit_code > 0:
-                raise DockerExecError(message=result.output)
+                raise DockerExecError(message=str(result.output))
             return str(result.output)
         except docker_errors.APIError:
             raise DockerExecError(message="MC MC server is asleep.")
@@ -71,7 +70,7 @@ class Rcon:
 
     def dual_message(self, message: str):
         logging.info(f"Sending message: {message}")
-        self.discord_messenger.send_message(message)
+        send_webhook_message(message)
         return self.say(message)
 
     def list(self):
@@ -93,19 +92,17 @@ class Rcon:
         logging.info(f"{player_count} player(s) online.")
         if player_count:
             logging.info("Sending announcement...")
+            minutes = 30
             self.dual_message(
                 f'Good evening, the MC MC server will be shutting down in {minutes} minute(s). See you tomorrow.')
-        self.docker_wrapper.shutdown(60*minutes)
+        self.docker_wrapper.shutdown(minutes)
+        return minutes
 
 
-def main(command: Literal["on", "off", "ping", "count", "send_message"], **kwargs) -> str:
+def send_mc_command(command: Literal["on", "off", "ping", "players", "send_message"], **kwargs) -> str:
     # init some objects and config
-    logging.basicConfig(format='[%(asctime)s] %(levelname)s: %(message)s', level=logging.INFO,
-                        # filename='minecraft_automation.log', encoding='utf-8'
-                        )
     docker_wrapper = DockerWrapper()
-    dm = DiscordMessenger()
-    rcon = Rcon(docker_wrapper, dm)
+    rcon = Rcon(docker_wrapper)
 
     if command == "on":
         if docker_wrapper.minecraft_server.status == 'running':
@@ -115,14 +112,14 @@ def main(command: Literal["on", "off", "ping", "count", "send_message"], **kwarg
             return "MC MC Server starting! Please wait approximately 2 minutes."
     elif command == "off":
         if docker_wrapper.minecraft_server.status == 'running':
-            rcon.init_shutdown()
-            return "MC MC shutting down..."
+            minutes = rcon.init_shutdown()
+            return f"MC MC will shutdown in {minutes} minute(s)."
         else:
             return "MC MC server is already off."
     elif command == "ping":
         rcon.say("Ping test")
         return "Pong! MC MC server is up and running."
-    elif command == "count":
+    elif command == "players":
         count = rcon.get_player_count()
         print(count)
         return f"{count} {'player' if count == 1 else 'players'} currently online."
@@ -133,11 +130,14 @@ def main(command: Literal["on", "off", "ping", "count", "send_message"], **kwarg
         return f"We sent: {msg}"
     else:
         raise TypeError(
-            f"command must be one of: on, off, ping, count, message")
+            f"command must be one of: on, off, ping, players, send_message")
 
 
 if __name__ == "__main__":
+    logging.basicConfig(format='[%(asctime)s] %(levelname)s: %(message)s', level=logging.INFO,
+                        filename='automation.log', encoding='utf-8'
+                        )
     parser = argparse.ArgumentParser()
     parser.add_argument('command', type=str)
     args = parser.parse_args()
-    main(args.command)
+    send_mc_command(args.command)
