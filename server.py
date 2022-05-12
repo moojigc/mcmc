@@ -20,8 +20,3 @@ def lmao(name=""):
 
 api.add_resource(Ping, "/ping", "/ping/<string:name>")
 api.add_resource(InteractionWebhook, "/interactions", methods=["POST"])
-
-args = argparse.ArgumentParser()
-args.add_argument("--debug", action=argparse.BooleanOptionalAction)
-args.add_argument("--log-to-file", action=argparse.BooleanOptionalAction)
-parsed_args = args.parse_args()

@@ -20,5 +20,5 @@ python_version = "3.9"
 
 [scripts]
 setup = "python setup_commands.py"
-prod = "gunicorn -w 1 main:app"
+prod = "gunicorn -w 1 server:app"
 dev = "python dev_server.py"
