@@ -23,6 +23,7 @@ class Message:
     options: List[Option] = field(
         default_factory=list)
     value: str = None
+    guild_id: str = None
 
     def __post_init__(self):
         self.options = [

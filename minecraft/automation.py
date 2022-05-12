@@ -60,7 +60,10 @@ class Rcon:
                 f"rcon-cli {cmd_str}")
             if result.exit_code > 0:
                 raise DockerExecError(message=str(result.output))
-            return str(result.output)
+            string_res = str(result.output)
+            if string_res is not None and "connect" in string_res:
+                raise DockerExecError(message="Server is still starting...")
+            return string_res
         except docker_errors.APIError:
             raise DockerExecError(message="MC MC server is asleep.")
 

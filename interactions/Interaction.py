@@ -51,6 +51,15 @@ class Interaction:
             return False
 
     @property
+    def get_user(self):
+        if self.user:
+            return self.user
+        elif self.member:
+            return self.member.user
+        else:
+            return None
+
+    @property
     def __get_follow_up_url(self):
         return f"https://discord.com/api/v8/webhooks/{self.application_id}/{self.token}"
 

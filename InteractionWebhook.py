@@ -51,10 +51,13 @@ class InteractionWebhook(MyResource):
             abort(403, message="Unauthorized server")
 
     def get_command_is_allowed(self, interaction: Interaction) -> bool:
+        logging.info("Checking command permissions???")
         hour = datetime.now().hour
-        is_night_time = 0 > hour > 7
-        print(is_night_time)
-        if is_night_time and interaction.is_restricted_command:
+        is_night_time = 0 < hour < 7
+        logging.debug(f'{is_night_time=}')
+        logging.debug(f"{interaction.is_restricted_command=}")
+        logging.debug(f'{interaction.is_user_moojig=}')
+        if not is_night_time and interaction.is_restricted_command:
             return interaction.is_user_moojig
         else:
             return True
@@ -73,7 +76,7 @@ class InteractionWebhook(MyResource):
         cmd_name = interaction.data.name
         res_msg = ""
         if not self.get_command_is_allowed(interaction):
-            return respond_to_interaction("Hey buckaroo, you're not authorized to do that!")
+            return respond_to_interaction(f"ayo *{interaction.get_user.username}* not allowed to do that until after **midnight**")
         if cmd_name == 'ping':
             res_msg = send_mc_command("ping")
         elif cmd_name == "server":
