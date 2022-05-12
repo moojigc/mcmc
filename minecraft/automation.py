@@ -51,6 +51,12 @@ class DockerWrapper:
 
 
 class Rcon:
+    @staticmethod
+    def clean_msg(msg: str):
+        msg = re.sub(pattern=r"'", string=msg, repl=r"\'")
+        msg = re.sub(pattern=r"\"", string=msg, repl=r"\"")
+        return msg
+
     def __init__(self, docker_wrapper: DockerWrapper) -> None:
         self.docker_wrapper = docker_wrapper
 
@@ -127,9 +133,13 @@ def send_mc_command(command: Literal["on", "off", "ping", "players", "send_messa
         print(count)
         return f"{count} {'player' if count == 1 else 'players'} currently online."
     elif command == "send_message":
-        msg = f"{kwargs['source']} message from {kwargs['name']}: {kwargs['message']}"
-        rcon.say(
-            msg)
+        msg = f"{kwargs['source']} message from {kwargs['name']}: {Rcon.clean_msg(kwargs['message'])}"
+        try:
+            rcon.say(
+                msg)
+        except ValueError as e:
+            print("this shit failed")
+            raise e
         return f"We sent: {msg}"
     else:
         raise TypeError(
