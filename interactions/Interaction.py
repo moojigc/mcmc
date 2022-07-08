@@ -5,12 +5,13 @@ from interactions.Message import Message
 from interactions.Member import Member
 from interactions.User import User
 from interactions.constants import InteractionRequestType, InteractionResponseType
+from interactions.my_utils import DiscordObject
 from interactions.respond import respond_to_interaction
 import requests
 
 
 @dataclass
-class Interaction:
+class Interaction(DiscordObject):
     def __post_init__(self):
         if self.member:
             self.member = Member.from_dict(**self.member)

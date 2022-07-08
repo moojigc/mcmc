@@ -22,7 +22,7 @@ class InteractionWebhook(MyResource):
             return {'message': 'invalid request signature'}, 401
 
         req = request.json
-        interaction = Interaction(**req)
+        interaction = Interaction.from_dict(**req)
         # check server is Moojcraft server!
         self.verify_server_is_allowed(interaction)
 
