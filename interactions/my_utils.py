@@ -5,7 +5,9 @@ import inspect
 @dataclass
 class DiscordObject:
     @classmethod
-    def from_dict(self, env):
+    def from_dict(self, **kwargs):
+        if not kwargs:
+            kwargs = dict()
         return self(**{
-            k: v for k, v in env.items() if k in fields(self)
+            k: v for k, v in kwargs if k in fields(self)
         })
