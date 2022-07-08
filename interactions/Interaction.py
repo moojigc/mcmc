@@ -13,11 +13,11 @@ import requests
 class Interaction:
     def __post_init__(self):
         if self.member:
-            self.member = Member(**self.member)
+            self.member = Member.from_dict(**self.member)
         if self.data:
-            self.data = Message(**self.data)
+            self.data = Message.from_dict(**self.data)
         if self.user:
-            self.user = User(**self.user)
+            self.user = User.from_dict(**self.user)
         self.type = InteractionRequestType(self.type)
 
     id: str

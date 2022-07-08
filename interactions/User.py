@@ -1,9 +1,11 @@
 
 from dataclasses import dataclass
 
+from interactions.my_utils import DiscordObject
+
 
 @dataclass
-class User:
+class User(DiscordObject):
     avatar: str
     discriminator: str
     id: str
