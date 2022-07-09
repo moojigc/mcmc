@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, List
 
-from interactions.my_utils import DiscordObject
+from interactions.my_utils import initDataclass
 
 
 class ValueType(Enum):
@@ -11,14 +11,14 @@ class ValueType(Enum):
 
 
 @dataclass
-class Option(DiscordObject):
+class Option:
     name: str
     type: int
     value: str
 
 
 @dataclass
-class Message(DiscordObject):
+class Message:
     id: str
     name: str
     type: int
@@ -29,5 +29,5 @@ class Message(DiscordObject):
 
     def __post_init__(self):
         self.options = [
-            Option.from_dict(**option) for option in self.options
+            initDataclass(Option, option) for option in self.options
         ]

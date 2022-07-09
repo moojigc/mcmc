@@ -4,6 +4,7 @@ from threading import Thread
 from urllib.request import Request
 from env import DISCORD_SERVER_ID, MOOJCRAFT_APP_ID, MOOJCRAFT_PUBLIC_KEY
 from interactions.constants import InteractionRequestType, InteractionResponseType
+from interactions.my_utils import initDataclass
 from interactions.respond import respond_to_interaction
 from utils.my_resource import MyResource, Argument
 from flask_restful import request, abort
@@ -22,7 +23,7 @@ class InteractionWebhook(MyResource):
             return {'message': 'invalid request signature'}, 401
 
         req = request.json
-        interaction = Interaction.from_dict(**req)
+        interaction = initDataclass(Interaction, req)
         # check server is Moojcraft server!
         self.verify_server_is_allowed(interaction)
 

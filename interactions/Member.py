@@ -2,11 +2,11 @@ from interactions.User import User
 from dataclasses import dataclass, field
 from typing import List
 
-from interactions.my_utils import DiscordObject
+from interactions.my_utils import initDataclass
 
 
 @dataclass
-class Member(DiscordObject):
+class Member:
     deaf: bool
     is_pending: bool
     pending: bool
@@ -23,4 +23,4 @@ class Member(DiscordObject):
     guild_id: str = None
 
     def __post_init__(self):
-        self.user = User.from_dict(**self.user)
+        self.user = initDataclass(User, self.user)

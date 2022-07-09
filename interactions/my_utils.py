@@ -1,13 +1,11 @@
-from dataclasses import dataclass, fields
-import inspect
+from dataclasses import fields
+from typing import Type, Generic
 
 
-@dataclass
-class DiscordObject:
-    @classmethod
-    def from_dict(self, **kwargs):
-        if not kwargs:
-            kwargs = dict()
-        return self(**{
-            k: v for k, v in kwargs if k in fields(self)
-        })
+def initDataclass(Cls, kwargs):
+    """Ignore extra keyword arguments in dataclass"""
+    names = set([f.name for f in fields(Cls)])
+    print(names)
+    return Cls(**{
+        k: v for k, v in kwargs.items() if k in names
+    })
