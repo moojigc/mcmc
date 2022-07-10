@@ -12,10 +12,17 @@ jobs:
     #   - image: alpine:3.14
     steps:
       - checkout
+      # - run:
+      #     name: Setup Docker CLI
+      #     command: apk add --update docker-cli openrc openssh
+      # - setup_remote_docker:
+      #     version: 20.10.14
+      #     docker_layer_caching: true
       - run:
           name: Build Docker Image
           command: |
             echo 'Starting build...'
+            sudo docker login dr.chimid.rocks -u moojig -p $DOCKERHUB_PASSWORD
             sudo docker build --pull --rm -f "Dockerfile" -t dr.chimid.rocks/mcmc:latest "."
       - run:
           name: Push Docker Image
@@ -29,9 +36,9 @@ jobs:
           name: chmod
           command: chmod 700 $HOME/.ssh/*
       - run:
-          name: Run update_mcmc script
+          name: Run update_mcmc script over SSH
           command: |
-            echo 'Running update_mcmc.sh...'
+            echo 'Connecting to $DOCKERHOST and running script...'
             ssh -o "StrictHostKeyChecking=no" $DOCKERHOST $REMOTE_USER/docker/update_mcmc.sh
             echo 'All done! mcmc.chimid.rocks now deployed!'
   # runner-test:
