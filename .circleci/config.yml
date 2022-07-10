@@ -39,29 +39,21 @@ jobs:
             echo 'Connecting to $DOCKERHOST and running script...'
             ssh -o "StrictHostKeyChecking=no" $DOCKERHOST $REMOTE_USER/docker/update_mcmc.sh
             echo 'All done! mcmc.chimid.rocks now deployed!'
-  say-hello:
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
-    docker:
-      - image: alpine:3.14
-    # Add steps to the job
-    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+  runner-test:
+    machine: true
+    resource_class: moojigc/rocks_ci
     steps:
-      - run:
-          name: Setup Docker CLI
-          command: apk add --update docker-cli openrc openssh
-      - add_ssh_keys:
-          fingerprints:
-            - "ff:23:b8:4a:24:2c:03:3d:22:66:d4:16:2e:32:07:cf"
-      - run:
-          name: chmod
-          command: chmod 700 $HOME/.ssh/*
-      - run:
-          name: Echo hello
-          command: ssh -o "StrictHostKeyChecking=no" $DOCKERHOST 'echo "BRUH" >> ~/hello.txt'
-
+      - run: echo "Hi I'm on Runners!"
 workflows:
   build:
     jobs:
-      # - say-hello
-      - build
+      - runner-test:
+          filters:
+            branches:
+              only:
+                - runner-test
+      - build:
+          filters:
+            branches:
+              only:
+                - main
