@@ -12,7 +12,7 @@ jobs:
       - checkout
       - run:
           name: Setup Docker CLI
-          command: apk add --update docker openrc
+          command: apk add --update docker-cli openrc openssh
       - setup_remote_docker:
           version: 20.10.14
           docker_layer_caching: true
