@@ -7,13 +7,12 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: python:3.9
+      - image: alpine:3.14
     steps:
       - run:
           name: Setup tools
           command: |
-            sudo apt-get update \
-              && sudo apt-get install docker
+            sudo apk add --no-cache docker
       - run:
           name: Build Docker Image
           command: |
