@@ -44,7 +44,8 @@ jobs:
           name: Setup Docker CLI
           command: apk add --update docker-cli openrc openssh
       - run:
-          name: chmod 700 ~/.ssh/*
+          name: chmod
+          command: chmod 700 ~/.ssh/*
       - run:
           name: Echo hello
           command: ssh $DOCKERHOST 'echo "BRUH" >> ~/hello.txt'
