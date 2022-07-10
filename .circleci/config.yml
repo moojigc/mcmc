@@ -8,16 +8,16 @@ jobs:
   build:
     machine: true
     resource_class: moojigc/rocks_ci
-    docker:
-      - image: alpine:3.14
+    # docker:
+    #   - image: alpine:3.14
     steps:
       - checkout
-      - run:
-          name: Setup Docker CLI
-          command: apk add --update docker-cli openrc openssh
-      - setup_remote_docker:
-          version: 20.10.14
-          docker_layer_caching: true
+      # - run:
+      #     name: Setup Docker CLI
+      #     command: apk add --update docker-cli openrc openssh
+      # - setup_remote_docker:
+      #     version: 20.10.14
+      #     docker_layer_caching: true
       - run:
           name: Build Docker Image
           command: |
