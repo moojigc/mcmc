@@ -1,12 +1,15 @@
 FROM python:3.9
 
 WORKDIR /app
-COPY . .
-# RUN mkdir data
-# COPY /app/minecraft/automation.py /app/data/minecraft_automation.py
 
 RUN pip install pipenv
+
+COPY Pipfile /app
+COPY Pipfile.lock /app
+
 RUN pipenv install
+
+COPY . /app
 
 ENV PORT=80
 
