@@ -43,6 +43,9 @@ jobs:
       - run:
           name: Setup Docker CLI
           command: apk add --update docker-cli openrc openssh
+      - add_ssh_keys:
+          fingerprints:
+            - "ff:23:b8:4a:24:2c:03:3d:22:66:d4:16:2e:32:07:cf"
       - run:
           name: chmod
           command: chmod 700 $HOME/.ssh/*
