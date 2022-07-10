@@ -13,8 +13,7 @@ jobs:
       - run:
           name: Setup tools
           command: |
-            apk add --update docker openrc \
-              && service docker start
+            apk add --update docker openrc
       - run:
           name: Build Docker Image
           command: |
