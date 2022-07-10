@@ -36,16 +36,19 @@ jobs:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
     docker:
-      - image: cimg/base:stable
+      - image: alpine:3.14
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
-      - checkout
       - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
+          name: Setup Docker CLI
+          command: apk add --update docker-cli openrc openssh
+      - run:
+          name: Echo hello
+          command: ssh $DOCKERHOST 'echo "BRUH" >> ~/hello.txt'
 
 workflows:
   build:
     jobs:
+      - say-hello
       - build
