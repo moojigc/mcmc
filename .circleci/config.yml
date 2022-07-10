@@ -6,6 +6,8 @@ version: 2.1
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
   build:
+    machine: true
+    resource_class: moojigc/rocks_ci
     docker:
       - image: alpine:3.14
     steps:
@@ -39,19 +41,19 @@ jobs:
             echo 'Connecting to $DOCKERHOST and running script...'
             ssh -o "StrictHostKeyChecking=no" $DOCKERHOST $REMOTE_USER/docker/update_mcmc.sh
             echo 'All done! mcmc.chimid.rocks now deployed!'
-  runner-test:
-    machine: true
-    resource_class: moojigc/rocks_ci
-    steps:
-      - run: echo "Hi I'm on Runners!"
+  # runner-test:
+  #   machine: true
+  #   resource_class: moojigc/rocks_ci
+  #   steps:
+  #     - run: echo "Hi I'm on Runners!"
 workflows:
   build:
     jobs:
-      - runner-test:
-          filters:
-            branches:
-              only:
-                - runner-test
+      # - runner-test:
+      #     filters:
+      #       branches:
+      #         only:
+      #           - runner-test
       - build:
           filters:
             branches:
