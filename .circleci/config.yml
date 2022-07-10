@@ -11,7 +11,7 @@ jobs:
     steps:
       - run:
           name: Setup tools
-          command: apk add --update docker openr
+          command: apk add --update docker openrc
       - run:
           name: Build Docker Image
           command: |
