@@ -50,11 +50,8 @@ jobs:
           name: chmod
           command: chmod 700 $HOME/.ssh/*
       - run:
-          name: Disable host checking
-          command: ssh -o "StrictHostKeyChecking=no" $DOCKERHOST
-      - run:
           name: Echo hello
-          command: ssh $DOCKERHOST 'echo "BRUH" >> ~/hello.txt'
+          command: ssh -o "StrictHostKeyChecking=no" $DOCKERHOST 'echo "BRUH" >> ~/hello.txt'
 
 workflows:
   build:
