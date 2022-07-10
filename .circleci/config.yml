@@ -10,6 +10,11 @@ jobs:
       - image: python:3.9
     steps:
       - run:
+          name: Setup tools
+          command: |
+            sudo apt-get update \
+              && sudo apt-get install docker
+      - run:
           name: Build Docker Image
           command: |
             echo 'Starting build...'
