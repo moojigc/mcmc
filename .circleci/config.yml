@@ -10,6 +10,9 @@ jobs:
       - image: alpine:3.14
     steps:
       - checkout
+      - run:
+          name: Setup Docker CLI
+          command: apk add --update docker openrc
       - setup_remote_docker:
           version: 20.10.14
           docker_layer_caching: true
