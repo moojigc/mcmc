@@ -88,6 +88,7 @@ class InteractionWebhook(MyResource):
                 thread = Thread(target=lambda *args: self.send_docker_server_command(
                     interaction))
                 try:
+                    # hi
                     thread.start()
                 except Exception as e:
                     return respond_to_interaction(repr(e))

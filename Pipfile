@@ -12,6 +12,7 @@ docker = "==5.0.3"
 gunicorn = "*"
 python-dotenv = "*"
 aioflask = "*"
+inotify = "*"
 
 [dev-packages]
 
@@ -20,5 +21,5 @@ python_version = "3.9"
 
 [scripts]
 setup = "python setup_commands.py"
-prod = "gunicorn -w 1 server:app"
-dev = "python dev_server.py"
+prod = "gunicorn -w 5 server:app"
+dev = "python dev_server.py --debug"
