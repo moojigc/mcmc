@@ -23,7 +23,7 @@ jobs:
           command: |
             echo 'Starting build...'
             sudo docker login $DOCKERHUB_HOST -u $DOCKERHUB_USER -p $DOCKERHUB_PASSWORD
-            sudo docker build --pull --rm -f "Dockerfile" -t $DOCKERHUB_HOST/mcmc:latest "."
+            sudo docker build . -t $DOCKERHUB_HOST/mcmc:latest "."
       - run:
           name: Push Docker Image
           command: |
