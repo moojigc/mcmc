@@ -22,24 +22,24 @@ jobs:
           name: Build Docker Image
           command: |
             echo 'Starting build...'
-            sudo docker login dr.chimid.rocks -u moojig -p $DOCKERHUB_PASSWORD
-            sudo docker build --pull --rm -f "Dockerfile" -t dr.chimid.rocks/mcmc:latest "."
+            sudo docker login $DOCKERHUB_HOST -u $DOCKERHUB_USER -p $DOCKERHUB_PASSWORD
+            sudo docker build --pull --rm -f "Dockerfile" -t $DOCKERHUB_HOST/mcmc:latest "."
       - run:
           name: Push Docker Image
           command: |
-            echo 'Pushing to dr.chimid.rocks...'
-            sudo docker push dr.chimid.rocks/mcmc:latest
-      - add_ssh_keys:
-          fingerprints:
-            - "ff:23:b8:4a:24:2c:03:3d:22:66:d4:16:2e:32:07:cf"
+            echo 'Pushing to $DOCKERHUB_HOST...'
+            sudo docker push $DOCKERHUB_HOST/mcmc:latest
       - run:
-          name: chmod
-          command: chmod 700 $HOME/.ssh/*
-      - run:
-          name: Run update_mcmc script over SSH
+          name: Run webhook
           command: |
-            echo 'Connecting to $DOCKERHOST and running script...'
-            ssh -o "StrictHostKeyChecking=no" $DOCKERHOST $REMOTE_USER/docker/update_mcmc.sh
+            curl --location --request POST $WEBHOOK_URL \
+            --header 'X-Webhook-Password: '$WEBHOOK_PASS'' \
+            --header 'Content-Type: application/json' \
+            --data-raw '{
+                "container": "mcmc",
+                "image": "mcmc:latest",
+                "stack": "mcmc"
+            }'
             echo 'All done! mcmc.chimid.rocks now deployed!'
   # runner-test:
   #   machine: true
