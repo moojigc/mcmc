@@ -14,8 +14,8 @@ services:
       EULA: "TRUE"
       TYPE: PAPER
       VERSION: 1.19
-      ICON: https://www.intellidnd.com/assets/images/primary-icon.png
-      MOTD: "The MC MC MC server."
+      ICON: https://new.intellidnd.com/assets/images/primary-icon.png
+      MOTD: "The MC MC MC server"
       ONLINE_MODE: "FALSE"
     volumes:
       - ./docker/minecraft:/data
@@ -24,16 +24,21 @@ services:
     restart: always
     networks:
       - minecraft
-  mcmc_flask_app:
-    container_name: mcmc_flask_app
+  server:
     build: .
-    command: pipenv run dev
+    command: python3.9 server.py --debug --port 80 --host 0.0.0.0
     networks:
       - minecraft
     ports:
       - 4343:80
     environment:
       - PORT=80
+      - MOOJCRAFT_APP_ID=${MOOJCRAFT_APP_ID}
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
+      - MOOJCRAFT_PUBLIC_KEY=${MOOJCRAFT_PUBLIC_KEY}
+      - DISCORD_SERVER_ID=${DISCORD_SERVER_ID}
+      - MOOJIG_DISCORD_USER_ID=${MOOJIG_DISCORD_USER_ID}
+      - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - .:/app

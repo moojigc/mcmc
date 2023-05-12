@@ -1,3 +1,4 @@
+import sys
 from datetime import date, datetime
 import logging
 from threading import Thread
@@ -10,9 +11,12 @@ from utils.my_resource import MyResource, Argument
 from flask_restful import request, abort
 from nacl.signing import VerifyKey
 from nacl.exceptions import BadSignatureError
-from minecraft.automation import DockerExecError, send_mc_command
+import commands
+from minecraft.docker_wrapper import DockerExecError
 from interactions.Interaction import Interaction
 from flask import Flask
+
+automator = commands.create_automator()
 
 
 class InteractionWebhook(MyResource):
@@ -33,19 +37,25 @@ class InteractionWebhook(MyResource):
             try:
                 return self.__handle(interaction)
             except DockerExecError as e:
-                return respond_to_interaction(e.message)
+                return respond_to_interaction(e)
             except Exception as e:
                 logging.error(e)
                 return respond_to_interaction(repr(e))
 
     def send_docker_server_command(self, interaction: Interaction):
-        try:
-            msg = send_mc_command(interaction.data.options[0].value)
+        logging.info(interaction.data.options[0].value)
+        msg = ""
+        if interaction.data.options[0].value == "on":
+            try:
+                msg = automator.on()
+            except Exception as e:
+                msg = str(e)
             return interaction.make_follow_up_response(msg)
-        except DockerExecError as e:
-            return interaction.make_follow_up_response(e.message)
+        try:
+            msg = automator.docker_wrapper.shutdown(delay=10)
+            return interaction.make_follow_up_response(msg)
         except Exception as e:
-            return e
+            return interaction.make_follow_up_response(str(e))
 
     def verify_server_is_allowed(self, interaction: Interaction) -> None:
         if interaction.type != InteractionRequestType.PING and interaction.guild_id != DISCORD_SERVER_ID:
@@ -75,30 +85,24 @@ class InteractionWebhook(MyResource):
 
     def __handle(self, interaction: Interaction):
         cmd_name = interaction.data.name
-        res_msg = ""
+        print(interaction.data)
         if not self.get_command_is_allowed(interaction):
             return respond_to_interaction(f"ayo *{interaction.get_user.username}* not allowed to do that until after **midnight**")
         if cmd_name == 'ping':
-            res_msg = send_mc_command("ping")
+            res_msg = automator.ping()
         elif cmd_name == "server":
-            option = interaction.data.options[0]
-            if option.value == "on":
-                res_msg = send_mc_command(option.value)
-            else:
-                thread = Thread(target=lambda *args: self.send_docker_server_command(
-                    interaction))
-                try:
-                    # hi
-                    thread.start()
-                except Exception as e:
-                    return respond_to_interaction(repr(e))
-                return respond_to_interaction("Sending shutdown command...", type=InteractionResponseType.DEFERRED_MESSAGE)
+            thread = Thread(target=lambda: self.send_docker_server_command(
+                interaction))
+            try:
+                thread.start()
+            except Exception as e:
+                return respond_to_interaction(str(e))
+            return respond_to_interaction("Sending shutdown command...", type=InteractionResponseType.DEFERRED_MESSAGE)
         elif cmd_name == "players":
-            res_msg = send_mc_command(cmd_name)
+            res_msg = automator.players()
         else:
             option = interaction.data.options[0]
             print(f"{interaction.data.options=}")
             name = interaction.member.user.username
-            res_msg = send_mc_command(
-                "send_message", message=option.value, source="DISCORD", name=name)
+            res_msg = automator.chat(option.value, player_name=name)
         return respond_to_interaction(res_msg)

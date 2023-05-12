@@ -8,7 +8,6 @@ from interactions.my_utils import initDataclass
 @dataclass
 class Member:
     deaf: bool
-    is_pending: bool
     pending: bool
     joined_at: str
     mute: bool

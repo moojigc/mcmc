@@ -10,6 +10,6 @@ def respond_to_interaction(content: str = None, type: InteractionResponseType = 
         "type": type.value,
         "data": {
             "tts": False,
-            "content": content
+            "content": str(content)
         }
     }

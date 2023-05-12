@@ -71,5 +71,5 @@ class Interaction:
             url=self.__get_follow_up_url, json={
                 "content": message or "Sorry guy, not sure what happened. Try again in a minute."
             })
-        print(discord_res.json())
+        # print(discord_res.json())
         return discord_res
