@@ -1,40 +1,39 @@
-version: "3.6"
+version: '3.6'
 ### networks
 networks:
-  minecraft:
-    name: minecraft
+    minecraft:
+        name: minecraft
 services:
-  mc:
-    image: itzg/minecraft-server
-    container_name: docker_mc_1
-    ports:
-      - 6969:25565
-      - 19132:19132/udp
-    environment:
-      EULA: "TRUE"
-      TYPE: PAPER
-      VERSION: 1.19
-      ICON: https://www.intellidnd.com/assets/images/primary-icon.png
-      MOTD: "The MC MC MC server."
-      ONLINE_MODE: "FALSE"
-    volumes:
-      - ./docker/minecraft:/data
-    tty: true
-    stdin_open: true
-    restart: always
-    networks:
-      - minecraft
-  mcmc_flask_app:
-    container_name: mcmc_flask_app
-    build: .
-    command: pipenv run dev
-    networks:
-      - minecraft
-    ports:
-      - 4343:80
-    environment:
-      - PORT=80
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - .:/app
-    restart: always
+    mc:
+        image: itzg/minecraft-server
+        container_name: docker_mc_1
+        ports:
+            - 6969:25565
+            - 19132:19132/udp
+        environment:
+            EULA: 'TRUE'
+            TYPE: PAPER
+            VERSION: 1.19
+            ICON: https://www.intellidnd.com/assets/images/primary-icon.png
+            MOTD: 'The MC MC MC server.'
+            ONLINE_MODE: 'FALSE'
+        volumes:
+            - ./docker/minecraft:/data
+        tty: true
+        stdin_open: true
+        restart: always
+        networks:
+            - minecraft
+    mcmc_flask_app:
+        container_name: mcmc_flask_app
+        build: .
+        networks:
+            - minecraft
+        ports:
+            - 4343:80
+        environment:
+            - PORT=80
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+            - .:/app
+        restart: always

@@ -2,12 +2,9 @@ FROM python:3.9
 
 WORKDIR /app
 
-RUN pip install pipenv
+COPY requirements.txt /app
 
-COPY Pipfile /app
-COPY Pipfile.lock /app
-
-RUN pipenv install
+RUN pip install -r requirements.txt
 
 COPY . /app
 
@@ -15,5 +12,5 @@ ENV PORT=80
 
 EXPOSE 80
 
-CMD ["pipenv", "run", "prod"]
+CMD ["gunicorn", "-w", "5", "server:app"]
 
